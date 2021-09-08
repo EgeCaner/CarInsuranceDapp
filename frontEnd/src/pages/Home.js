@@ -5,8 +5,8 @@ import {
 
 export default () => (
   <div>
-    <Typography variant="h6">Hyperledger Fabric Sample application</Typography>
-    <p variant="h6">This sample application connects two blockchain networks and commits transactions on both</p>
+    <Typography variant="h6">Algorand Sample application</Typography>
+    <p variant="h6">This simple car & insurance</p>
   </div>
   
 );

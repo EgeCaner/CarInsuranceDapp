@@ -1,1 +1,1 @@
-The FrontEnd implementation of the POC
+Implementation of the POC

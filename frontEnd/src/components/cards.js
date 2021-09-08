@@ -5,16 +5,22 @@ const carCards = ({ carList }) => {
     <div>
       <center><h1>List of Cars on Ledger</h1></center>
       {carList.map((car) => (
-        <div class="card">
-          <div class="card-body">
-            <h3 class="card-title">{car.Key}</h3>
-            <h5 class="card-subtitle mb-2 text-muted">{car.Record.owner}</h5>
-            <h5 class="card-text">{car.Record.make}</h5>
-            <h5 class="card-text">{car.Record.model}</h5>
-            <h5 class="card-text">{car.Record.color}</h5>
-            <h5 class="card-text">{car.Record.insurance}</h5>
-          </div>
-        </div>
+          <table>
+          <tr>
+            <th>CarID</th>
+            <th>Owner</th>
+            <th>CarManufacturer</th>
+            <th>CarModel</th>
+            <th>CarColor</th>
+          </tr>
+          <tr>
+            <td>{car.Key}</td>
+            <td>{car.Record.owner}</td>
+            <td>{car.Record.make}</td>
+            <td>{car.Record.model}</td>
+            <td>{car.Record.color}</td>
+          </tr>
+        </table>      
       ))}
     </div>
   )

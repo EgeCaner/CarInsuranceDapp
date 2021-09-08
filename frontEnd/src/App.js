@@ -1,16 +1,16 @@
 import React, { Fragment } from 'react';
-import {Route} from 'react-router-dom'
+import {Route} from 'react-router-dom';
 import {
   CssBaseline,
   withStyles,
-} from '@material-ui/core'
+} from '@material-ui/core';
 
 import AppHeader from './AppHeader';
 import Home from './pages/Home';
-import allcars from './pages/allCars'
-import addCars from './pages/addCar'
-import changeCarOwner from './pages/changeOwner'
-import addCarWithInsurace from './pages/addCarWithInsurance'
+import allCars from './pages/allCars';
+import addCars from './pages/addCar';
+import changeCarOwner from './pages/changeOwner';
+import addCarWithInsurace from './pages/addCarWithInsurance';
 import allCarInsurances from './pages/allCarInsurances'
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -32,10 +32,10 @@ const App = ({ classes }) => (
       <Home />
       {/* <Route exact path="/" component={Home} /> */}
       <Route path="/addCars" component={addCars}/>
-      <Route path="/allCars" component={allcars}/>
       <Route path="/changeOwner" component={changeCarOwner}/>
       <Route path="/addCarWithInsurance" component={addCarWithInsurace}/>
       <Route path="/allCarInsurances" component={allCarInsurances}/>
+      <Route path="/allCars" component={allCars}/>
       <ToastContainer autoClose={6000}/>
     </main>
   </Fragment>
