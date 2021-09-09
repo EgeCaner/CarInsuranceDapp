@@ -1,0 +1,11 @@
+#pragma version 4
+byte "TotalCars"
+app_global_get
+int 1
+-
+store 1
+byte "TotalCars"
+load 1
+app_global_put
+int 1
+return

@@ -10,7 +10,7 @@ const algodToken = "";
 const algodPort ="";
 let account;
 let algodClient = new algosdk.Algodv2(algodToken, algodAddress, algodPort);
-
+const appIndex = 25532407;
 let stateless_acc_addr;
 var check =algodClient.healthCheck().do();
 if (check){
@@ -187,7 +187,7 @@ async function payment(to, amount, client){
     }
 
 }
-async function optIn(){
+async function optIn(appIndex){
     try{
          // get suggested parameters
     const params = await algodClient.getTransactionParams().do();
@@ -209,9 +209,8 @@ async function optIn(){
 
     // create a transaction
     const sender = lsig.address();
-    payment(sender, 1000000, algodClient);
+    await payment(sender, 1000000, algodClient);
     stateless_acc_addr = sender;
-    const appIndex = 25532407;
 
     const txn = algosdk.makeApplicationOptInTxn(sender, params, appIndex);
 
@@ -262,8 +261,9 @@ export default function AddCar() {
         appArgs.push(new Uint8Array(Buffer.from(carModel)));
         appArgs.push(new Uint8Array(Buffer.from(carColor)));
         appArgs.push(new Uint8Array(Buffer.from(carID)));
+        
         await optIn();
-        await callApp(algodClient, 25532407, appArgs, [stateless_acc_addr]);
+        await callApp(algodClient, appIndex, appArgs, [stateless_acc_addr]);
         }catch(error){
             console.error(`AddCar- Failed to evaluate transaction: ${error}`);
         }

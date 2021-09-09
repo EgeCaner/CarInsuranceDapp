@@ -1,0 +1,268 @@
+#pragma version 4
+// check if the app is being created
+// if so save creator
+int 0
+txn ApplicationID
+==
+bz not_creation
+byte "Creator"
+txn Sender
+app_global_put
+byte "TotalCars"
+int 0
+app_global_put
+int 1
+return
+not_creation:
+// check if this is deletion ---
+int DeleteApplication
+txn OnCompletion
+==
+bz not_deletion
+byte "Creator"
+app_global_get
+txn Sender
+==
+bz failed
+int 1
+return
+not_deletion:
+//---
+// check if this is update ---
+int UpdateApplication
+txn OnCompletion
+==
+bz not_update
+byte "Creator"
+app_global_get
+txn Sender
+==
+bz failed
+int 1
+return
+not_update:
+//---
+// check for closeout
+int CloseOut
+txn OnCompletion
+==
+bnz close_out
+// register
+txn OnCompletion
+int OptIn
+==
+bnz register
+txna ApplicationArgs 0
+byte "addCar" 
+==
+bnz addCar
+txna ApplicationArgs 0
+byte "changeOwner"
+==
+bnz changeOwner
+txna ApplicationArgs 0
+byte "setHTLC"
+==
+bnz setHTLC
+int 0
+return
+//--------------------------------- ADDCAR ----------------------------
+addCar:            
+//Check that the account has opted in
+//account offset (0 == sender, 1 == txn.accounts[0], 2 == txn.accounts[1], etc..)
+txn Accounts 1
+txn ApplicationID
+app_opted_in
+bz failed
+int 5
+txn NumAppArgs
+==
+bz failed
+//check local to see if they have car
+txn Accounts 1
+txn ApplicationID
+byte "CarManufacturer"
+app_local_get_ex 
+bnz alreadyhavecar
+pop
+byte "TotalCars"
+app_global_get
+int 1
++
+store 1
+byte "TotalCars"
+load 1
+app_global_put
+txn Accounts 1
+byte "CarManufacturer"
+txna ApplicationArgs 1
+app_local_put
+txn Accounts 1
+byte "CarModel"
+txna ApplicationArgs 2
+app_local_put
+txn Accounts 1
+byte "CarColor"
+txna ApplicationArgs 3
+app_local_put
+txn Accounts 1
+byte "ProdYear"
+txna ApplicationArgs 4
+app_local_put
+txn Accounts 1
+byte "Owner"
+txn Sender
+app_local_put
+txn Accounts 1
+byte "Creator"
+txn Sender
+app_local_put
+int 1
+return
+alreadyhavecar:
+pop
+int 0
+return
+register:
+int 1
+return
+// call if this is a closeout op
+//-------------------- CLOSE OUT ------------------
+close_out:         
+txn Sender
+txn Applications 1
+byte "InsuranceForCarID"
+app_local_get_ex
+bnz failed
+byte "TotalCars"
+app_global_get
+int 1
+-
+store 1
+byte "TotalCars"
+load 1
+app_global_put
+int 1
+return
+//--------------------- CHANGE OWNER ------------------
+changeOwner: 
+txn Accounts 1
+txn ApplicationID
+app_opted_in
+bz failed
+int 2
+txn NumAppArgs
+==
+bz failed
+txn Accounts 1
+txn ApplicationID
+byte "Receiver"
+app_local_get_ex
+bz failed
+txn Sender
+==
+bz failed
+txn Accounts 1
+txn ApplicationID
+byte "FirstValid"
+app_local_get_ex
+bz failed
+global Round
+<=
+bz failed
+txn Accounts 1
+txn ApplicationID
+byte "LastValid"
+app_local_get_ex
+bz finished
+global Round
+>=
+bz failed
+txn Accounts 1
+txn ApplicationID
+byte "Hash"
+app_local_get_ex
+bz failed
+txn ApplicationArgs 1
+sha256
+==
+bz failed
+txn Accounts 1
+byte "Owner"
+txn Sender
+app_local_put
+txn Accounts 1
+byte "Hash"
+app_local_del
+txn Accounts 1
+byte "FirstValid"
+app_local_del
+txn Accounts 1
+byte "LastValid"
+app_local_del
+txn Accounts 1
+byte "Receiver"
+app_local_del
+int 1
+return
+//-------------------- SETHTLC ------------------
+setHTLC:       
+txn Accounts 1
+txn ApplicationID
+app_opted_in
+bz failed
+int 2
+txn NumAppArgs
+==
+bz failed
+txn Accounts 1
+txn ApplicationID
+byte "Owner"
+app_local_get_ex
+bz failed
+txn Sender
+==
+bz failed
+txn Accounts 1
+txn ApplicationID
+byte "Hash"
+app_local_get_ex
+bz htlcContinue
+pop
+txn Accounts 1
+txn ApplicationID
+byte "LastValid"
+app_local_get
+global Round
+<=
+bnz htlcContinue
+int 0 
+return
+htlcContinue:
+txn Accounts 1
+byte "Hash"
+txn ApplicationArgs 1
+sha256 
+app_local_put
+txn Accounts 1
+byte "FirstValid"
+global Round
+app_local_put
+txn Accounts 1
+byte "LastValid"
+global Round
+int 3000
++
+app_local_put
+txn Accounts 1
+byte "Receiver"
+txn Accounts 2
+app_local_put
+int 1
+return
+failed:
+int 0
+return
+finished:
+int 1
+return

@@ -48,7 +48,7 @@ const waitForConfirmation = async function (algodclient, txId) {
         .then((d) => {
             if(d && d.length > 0){
                 console.log(`Account found: ${JSON.stringify(d[0])}`);
-                account = d[1];
+                account = d[0];
             }
             else{
                 throw('Primary test account not found in AlgoSigner.');
@@ -66,8 +66,6 @@ export default function ChangeCarOwner() {
     const [carId, setCarId] = React.useState('')
     const [newOwner, setNewOwner] = React.useState('')
     const [hash, setHash] = React.useState('')
-    const [firstValid, setFirstValid] = React.useState('')
-    const [lastValid, setLastValid] = React.useState('')
     const [receiver, setReceiver] = React.useState('')
     //State Handlers
     const handleCarID = (event) => {
@@ -85,13 +83,7 @@ export default function ChangeCarOwner() {
     const handleReceiver = (event) => {
         setReceiver(event.target.value)
     }
-    const handleFirstValid = (event) => {
-        setFirstValid(event.target.value)
-    }
 
-    const handleLastValid = (event) => {
-        setLastValid(event.target.value)
-    }
     const handleHash = (event) => {
         setHash(event.target.value)
     }
@@ -140,7 +132,6 @@ export default function ChangeCarOwner() {
         
             // Wait for confirmation
             await waitForConfirmation(algodClient, txId);
-        
             // display results
             let transactionResponse = await algodClient.pendingTransactionInformation(txId).do();
             console.log("Called app-id:",transactionResponse['txn']['txn']['apid'])
@@ -219,7 +210,7 @@ export default function ChangeCarOwner() {
     return (
         <div>
             <br></br>
-            <h2>Set HTLC</h2>
+            <h2>Set HTLC(Time interval fixed to 2000 rounds)</h2>
             <br></br>
             <TextField
                 className={classes.margin}

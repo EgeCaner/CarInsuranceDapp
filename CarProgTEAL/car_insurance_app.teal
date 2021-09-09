@@ -1,0 +1,112 @@
+#pragma version 4
+// check if the app is being created
+// if so save creator
+int 0
+txn ApplicationID
+==
+bz not_creation
+byte "Creator"
+txn Sender
+app_global_put
+byte "TotalInsurance"
+int 0
+app_global_put
+int 1
+return
+not_creation:
+// check if this is deletion ---
+int DeleteApplication
+txn OnCompletion
+==
+bz not_deletion
+byte "Creator"
+app_global_get
+txn Sender
+==
+bz failed
+int 1
+return
+not_deletion:
+//---
+// check if this is update ---
+int UpdateApplication
+txn OnCompletion
+==
+bz not_update
+byte "Creator"
+app_global_get
+txn Sender
+==
+bz failed
+int 1
+return
+not_update:
+//---
+// check for closeout
+int CloseOut
+txn OnCompletion
+==
+bnz close_out
+// register
+txn OnCompletion
+int OptIn
+==
+bnz register
+txna ApplicationArgs 0
+byte "createInsurance" 
+==
+bnz createInsurance
+int 0
+return
+//---------------- CREATE-INSURANCE --------------------
+createInsurance:
+txn Accounts 1
+txn ApplicationID
+app_opted_in
+bz failed
+txn Accounts 1
+txn Applications 1
+app_opted_in
+bz failed
+txn Accounts 1
+txn Applications 1
+byte "CarManufacturer"
+app_local_get_ex
+bz failed
+byte "TotalInsurance"
+app_global_get
+int 1
++
+store 2
+byte "TotalInsurance"
+load 2
+app_global_put
+txn Accounts 1
+byte "InsuranceID"
+txn ApplicationArgs 1
+app_local_put
+int 1
+return
+register:
+int 1
+return
+alreadyhaveinsurance:
+int 0
+return
+close_out:
+byte "TotalInsurance"
+app_global_get
+int 1
+-
+store 1
+byte "TotalInsurance"
+load 1
+app_global_put
+int 1
+return
+failed:
+int 0
+return
+finished:
+int 1
+return

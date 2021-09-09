@@ -10,6 +10,8 @@ const algodAddress = "https://testnet.algoexplorerapi.io/";
 const algodToken = "";
 const algodPort ="";
 let stateless_acc_addr;
+let car_app_id = 25532407;
+let insurance_app_id = 25540600;
 
 let algodClient = new algosdk.Algodv2(algodToken, algodAddress, algodPort);
 
@@ -135,8 +137,8 @@ const waitForConfirmation = async function (algodclient, txId) {
         await payment(sender, 3000000, algodClient);
         stateless_acc_addr = sender;
     
-        const txn_1 = algosdk.makeApplicationOptInTxn(sender, params, 25540600);
-        const txn_2 = algosdk.makeApplicationOptInTxn(sender, params, 25532407);
+        const txn_1 = algosdk.makeApplicationOptInTxn(sender, params, insurance_app_id);
+        const txn_2 = algosdk.makeApplicationOptInTxn(sender, params, car_app_id);
         let txns = [txn_1, txn_2];
         let txgroup = algosdk.assignGroupID(txns);
         const rawSignedTxn_1 = algosdk.signLogicSigTransactionObject(txgroup[0], lsig);
@@ -211,19 +213,18 @@ export default function AddCar() {
             params.flatFee = true;
             let appArg = [];
             appArg.push(new Uint8Array(Buffer.from("createInsurance")));
-            appArg.push(new Uint8Array(Buffer.from(carInsurance)));
-            let appArr = [25532407]
+            appArg.push(new Uint8Array(Buffer.from(carInsurance))); 
             // create unsigned transaction   [str:addCar, str:Skoda, str: ]
             //let state= await client.accountInformation(account.addr).do()
             //let txn = algosdk.makeApplicationOptInTxn(sender, params, index);
-            let txn_1 = algosdk.makeApplicationNoOpTxn(account.address, params, 25540600, appArg,[stateless_acc_addr],appArr);
+            let txn_1 = algosdk.makeApplicationNoOpTxn(account.address, params, insurance_app_id, appArg,[stateless_acc_addr],[car_app_id]);
             let appArgs = [];
             appArgs.push(new Uint8Array(Buffer.from("addCar")));
             appArgs.push(new Uint8Array(Buffer.from(carMake)));
             appArgs.push(new Uint8Array(Buffer.from(carModel)));
             appArgs.push(new Uint8Array(Buffer.from(carColor)));
             appArgs.push(new Uint8Array(Buffer.from(carOwner)));
-            let txn_2 = algosdk.makeApplicationNoOpTxn(account.address, params, 25532407, appArgs, [stateless_acc_addr]);
+            let txn_2 = algosdk.makeApplicationNoOpTxn(account.address, params, car_app_id, appArgs, [stateless_acc_addr]);
             let txns = []
             txns.push(txn_2);
             txns.push(txn_1);

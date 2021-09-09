@@ -14,7 +14,6 @@ class allCars extends Component {
         carList: []
     }
 
-    
    async getAllCars(){
         let data = [];
         try{
@@ -24,14 +23,18 @@ class allCars extends Component {
                 let Key = accountInfo.accounts[i].address;
                 for (let j = 0; j < accountInfo.accounts[i]['apps-local-state'].length; j++) {
                     if(accountInfo.accounts[i]['apps-local-state'][j].id == car_app_id){
-                        if(accountInfo.accounts[i]['apps-local-state'][j]['key-value'] != null){
-                            if(accountInfo.accounts[i]['apps-local-state'][j]['key-value'].length > 2) {
-                                let color =Buffer(accountInfo.accounts[i]['apps-local-state'][j]['key-value'][0].value.bytes, 'base64').toString('ascii');    
-                                let make =Buffer(accountInfo.accounts[i]['apps-local-state'][j]['key-value'][1].value.bytes, 'base64').toString('ascii');    
-                                let model =Buffer(accountInfo.accounts[i]['apps-local-state'][j]['key-value'][2].value.bytes, 'base64').toString('ascii');    
-                                let owner =Buffer(accountInfo.accounts[i]['apps-local-state'][j]['key-value'][4].value.bytes, 'base64').toString('ascii');    
-                                data.push({Key:Key,Record:{owner:owner , make:make, model:model, color:color}});
-                            }
+                        let temp =accountInfo.accounts[i]['apps-local-state'][j]['key-value'];
+                        if(temp != null && temp.length > 2){
+                            let make;
+                            let color;
+                            let model;
+                            let owner;
+                            let year;
+                            for (let k = 0; k < temp.length; k++) {                                  
+                                (Buffer(temp[k].key, 'base64').toString('ascii') == "CarManufacturer" ? make = Buffer(temp[k].value.bytes, 'base64').toString('ascii') : Buffer(temp[k].key, 'base64').toString('ascii') == "CarColor" ? color = Buffer(temp[k].value.bytes, 'base64').toString('ascii') : Buffer(temp[k].key, 'base64').toString('ascii') == "CarModel" ? model = Buffer(temp[k].value.bytes, 'base64').toString('ascii') : Buffer(temp[k].key, 'base64').toString('ascii') == "ProdYear" ? year = Buffer(temp[k].value.bytes, 'base64').toString('ascii'):Buffer(temp[k].key, 'base64').toString('ascii') == "Owner" ? owner = algosdk.encodeAddress(Buffer(temp[k].value.bytes, 'base64')): console.log("AllCarsEmptyEntity!!!"));           
+                            }     
+                            
+                            data.push({Key:Key,Record:{owner:owner , make:make, model:model, color:color ,year: year}});               
                         }
                     }   
                 }
