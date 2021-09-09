@@ -11,7 +11,8 @@ import allCars from './pages/allCars';
 import addCars from './pages/addCar';
 import changeCarOwner from './pages/changeOwner';
 import addCarWithInsurace from './pages/addCarWithInsurance';
-import allCarInsurances from './pages/allCarInsurances'
+import allCarInsurances from './pages/allCarInsurances';
+import allHTLC from './pages/allHTLC';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -36,6 +37,7 @@ const App = ({ classes }) => (
       <Route path="/addCarWithInsurance" component={addCarWithInsurace}/>
       <Route path="/allCarInsurances" component={allCarInsurances}/>
       <Route path="/allCars" component={allCars}/>
+      <Route path="/allHTLC" component={allHTLC}/>
       <ToastContainer autoClose={6000}/>
     </main>
   </Fragment>

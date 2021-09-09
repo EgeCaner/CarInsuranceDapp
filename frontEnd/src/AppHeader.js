@@ -14,6 +14,7 @@ const AppHeader = () => (
       <Button color="inherit" component={Link} to="/addCars">Add-Car</Button>
       <Button color="inherit" component={Link} to="/allCars">All-Cars</Button>
       <Button color="inherit" component={Link} to="/changeOwner">Change-Owner</Button>
+      <Button color="inherit" component={Link} to="/allHTLC">All-HTLC</Button>
       <Button color="inherit" component={Link} to="/allCarInsurances">All-Car-Insurances</Button>
       <Button color="inherit" component={Link} to="/addCarWithInsurance">Add-Car-With-Insurance</Button>
     </Toolbar>

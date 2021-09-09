@@ -8,5 +8,4 @@ export default () => (
     <Typography variant="h6">Algorand Sample application</Typography>
     <p variant="h6">This simple car & insurance</p>
   </div>
-  
 );
